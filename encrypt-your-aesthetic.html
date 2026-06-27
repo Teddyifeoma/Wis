@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Encrypt Your Aesthetic — Powered by Fhenix</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#060f1e;
+  --navy2:#0a1628;
+  --navy3:#0d1f35;
+  --cyan:#00d4ff;
+  --cyan-dim:rgba(0,212,255,0.08);
+  --cyan-mid:rgba(0,212,255,0.15);
+  --cyan-glow:rgba(0,212,255,0.3);
+  --white:#f0f4ff;
+  --muted:#6a8099;
+  --border:rgba(0,212,255,0.12);
+  --border2:rgba(0,212,255,0.2);
+}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--white);font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+.orb{position:fixed;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.04) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none;z-index:0}
+.orb2{position:fixed;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.03) 0%,transparent 70%);bottom:-150px;left:-150px;pointer-events:none;z-index:0}
+
+header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border)}
+.logo-area{display:flex;align-items:center;gap:10px}
+.fhenix-logo{width:32px;height:32px;border-radius:8px;object-fit:cover}
+.logo-text{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)}
+.logo-text span{color:var(--cyan)}
+.by-whisper{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
+.by-whisper a{color:var(--cyan);text-decoration:none}
+
+.hero{position:relative;z-index:10;text-align:center;padding:70px 40px 50px;max-width:760px;margin:0 auto}
+.hero-tag{display:inline-block;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);border:1px solid var(--border2);background:var(--cyan-dim);padding:6px 16px;border-radius:100px;margin-bottom:28px}
+.hero h1{font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:700;line-height:1.1;letter-spacing:-0.02em;margin-bottom:18px}
+.hero h1 .highlight{color:var(--cyan)}
+.hero p{font-size:1.05rem;color:var(--muted);line-height:1.75;max-width:500px;margin:0 auto 12px}
+.fhe-note{font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan);opacity:0.6;margin-top:8px}
+
+.quiz-wrap{position:relative;z-index:10;max-width:660px;margin:0 auto;padding:0 24px 80px}
+
+.progress-bar-wrap{margin-bottom:36px}
+.progress-labels{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:8px}
+.progress-track{height:2px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--cyan);border-radius:2px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);box-shadow:0 0 10px var(--cyan-glow)}
+
+.question-card{background:var(--navy3);border:1px solid var(--border);border-radius:20px;padding:40px;margin-bottom:14px;animation:fadeUp 0.4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.q-number{font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:0.1em;margin-bottom:6px}
+.q-hint{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);opacity:0.5;margin-bottom:16px;letter-spacing:0.04em}
+.q-text{font-size:1.28rem;font-weight:600;line-height:1.4;margin-bottom:26px;letter-spacing:-0.01em}
+.options{display:grid;gap:10px}
+.option-btn{background:transparent;border:1px solid var(--border);border-radius:12px;padding:15px 18px;color:var(--white);font-family:'Space Grotesk',sans-serif;font-size:0.92rem;text-align:left;cursor:pointer;transition:all 0.2s ease;display:flex;align-items:center;gap:14px;width:100%}
+.option-btn:hover{border-color:var(--cyan);background:var(--cyan-dim);transform:translateX(4px)}
+.option-btn.selected{border-color:var(--cyan);background:var(--cyan-mid);box-shadow:0 0 16px var(--cyan-glow)}
+.option-btn.locked{pointer-events:none}
+.option-key{font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan);border:1px solid var(--border2);padding:3px 8px;border-radius:6px;min-width:28px;text-align:center;flex-shrink:0}
+.lock-icon{margin-left:auto;font-size:12px;opacity:0;transition:opacity 0.3s;flex-shrink:0}
+.option-btn.selected .lock-icon{opacity:1}
+
+.encrypt-btn{width:100%;padding:17px;background:var(--cyan);color:var(--navy);border:none;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;letter-spacing:0.05em;cursor:pointer;transition:all 0.2s ease;margin-top:6px;display:none}
+.encrypt-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px var(--cyan-glow)}
+
+.encrypting{display:none;text-align:center;padding:56px 40px;background:var(--navy3);border:1px solid var(--border);border-radius:20px;animation:fadeUp 0.4s ease}
+.encrypting-label{font-family:'Space Mono',monospace;font-size:12px;color:var(--cyan);letter-spacing:0.12em;margin-bottom:6px}
+.encrypting-sub{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);opacity:0.55;margin-bottom:20px;letter-spacing:0.05em}
+.cipher-stream{font-family:'Space Mono',monospace;font-size:10px;color:var(--cyan);opacity:0.3;word-break:break-all;line-height:1.9;height:56px;overflow:hidden;margin-bottom:20px}
+.loading-bar{height:2px;background:var(--border);border-radius:2px;overflow:hidden}
+.loading-fill{height:100%;background:var(--cyan);border-radius:2px;box-shadow:0 0 10px var(--cyan-glow);animation:load 2.2s ease forwards}
+@keyframes load{from{width:0%}to{width:100%}}
+.fhe-explain{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);opacity:0.45;margin-top:14px;letter-spacing:0.04em}
+
+/* RESULT CARD — all Fhenix colors */
+.result-card{display:none;background:var(--navy3);border:1px solid var(--border2);border-radius:20px;overflow:hidden;animation:fadeUp 0.6s ease;box-shadow:0 0 60px rgba(0,212,255,0.06)}
+
+.era-banner{width:100%;height:200px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:var(--navy2);border-bottom:1px solid var(--border2)}
+.era-symbol{font-size:5.5rem;line-height:1;z-index:2;position:relative}
+.era-glow{position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.12) 0%,transparent 70%);z-index:1}
+.era-bg-text{position:absolute;inset:0;font-family:'Space Mono',monospace;font-size:9px;color:var(--cyan);opacity:0.05;word-break:break-all;padding:12px;line-height:1.7;overflow:hidden;pointer-events:none;z-index:0}
+
+.result-body{padding:36px}
+.result-era-tag{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.result-title{font-size:clamp(1.7rem,4.5vw,2.5rem);font-weight:700;letter-spacing:-0.02em;margin-bottom:8px;line-height:1.1;color:var(--white)}
+.result-subtitle{font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan);opacity:0.55;margin-bottom:20px;letter-spacing:0.05em}
+.result-divider{height:1px;background:var(--border);margin:20px 0}
+.result-desc{font-size:0.94rem;color:var(--muted);line-height:1.8;margin-bottom:22px}
+.result-desc strong{color:var(--white)}
+.result-traits{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.result-trait{font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan);background:var(--cyan-dim);border:1px solid var(--border2);padding:5px 14px;border-radius:100px;font-weight:600;letter-spacing:0.05em}
+.fhe-connection{background:var(--navy2);border:1px solid var(--border2);border-radius:12px;padding:18px;margin-bottom:26px;font-size:0.88rem;color:var(--muted);line-height:1.7}
+.fhe-connection strong{color:var(--cyan)}
+.fhe-connection a{color:var(--cyan);text-decoration:none;font-weight:600}
+
+.action-row{display:flex;flex-wrap:wrap;gap:10px}
+.btn-download{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;background:var(--cyan);color:var(--navy);border:none;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s ease}
+.btn-download:hover{transform:translateY(-2px);box-shadow:0 8px 24px var(--cyan-glow)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;background:transparent;border:1px solid var(--border2);color:var(--muted);border-radius:10px;font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s ease;text-decoration:none}
+.btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim)}
+
+footer{position:relative;z-index:10;border-top:1px solid var(--border);padding:20px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.footer-txt{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
+.footer-txt a{color:var(--cyan);text-decoration:none}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--cyan);color:var(--navy);font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:11px 22px;border-radius:100px;z-index:100;transition:transform 0.3s ease;letter-spacing:0.05em;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  header{padding:16px 20px}
+  .hero{padding:44px 20px 36px}
+  .quiz-wrap{padding:0 16px 60px}
+  .question-card{padding:26px 22px}
+  .result-body{padding:26px 22px}
+  footer{padding:18px 20px;flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="orb"></div><div class="orb2"></div>
+
+<header>
+  <div class="logo-area">
+    <img src="https://pbs.twimg.com/profile_images/1674037566761836547/M-wTpbmE_400x400.jpg" alt="Fhenix" class="fhenix-logo" onerror="this.style.display='none'"/>
+    <span class="logo-text">( f* ) <span>fhenix</span></span>
+  </div>
+  <span class="by-whisper">by <a href="https://x.com/wisweb3" target="_blank">@wisweb3</a> for <a href="https://x.com/fhenix" target="_blank">@fhenix</a></span>
+</header>
+
+<section class="hero">
+  <div class="hero-tag">✦ interactive privacy experience</div>
+  <h1>What's your<br/><span class="highlight">Privacy Era?</span></h1>
+  <p>5 questions. Your answers stay encrypted until the final reveal. Discover which era of privacy you belong to — from ancient seals to fully homomorphic encryption.</p>
+  <p class="fhe-note">// your answers are processed. never exposed. only you see the result.</p>
+</section>
+
+<div class="quiz-wrap">
+  <div class="progress-bar-wrap" id="progressWrap">
+    <div class="progress-labels">
+      <span id="progressLabel">Question 1 of 5</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="question-card" id="questionCard">
+    <div class="q-number" id="qNumber">— 01 / 05</div>
+    <div class="q-hint" id="qHint"></div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="optionsWrap"></div>
+  </div>
+
+  <button class="encrypt-btn" id="encryptBtn" onclick="lockAndNext()">🔒 Encrypt &amp; Continue</button>
+
+  <div class="encrypting" id="encryptingScreen">
+    <div class="encrypting-label">// encrypting your aesthetic...</div>
+    <div class="encrypting-sub">your answers are being processed — no one can see them, not even us</div>
+    <div class="cipher-stream" id="cipherStream"></div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+    <div class="fhe-explain">// this is what FHE feels like — computed without being exposed</div>
+  </div>
+
+  <div class="result-card" id="resultCard"></div>
+</div>
+
+<footer>
+  <div class="footer-txt">built for <a href="https://fhenix.io" target="_blank">fhenix.io</a> — encrypted computation on Ethereum</div>
+  <div class="footer-txt"><a href="https://x.com/wisweb3" target="_blank">@wisweb3</a> × <a href="https://x.com/fhenix" target="_blank">@fhenix</a></div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const questions=[
+  {q:"Someone wants to know your next move. What do you do?",hint:"// your answer encrypts the moment you lock it in",options:["I hand them a sealed scroll. What's inside is mine alone 📜","I wear a mask. The face they see isn't the real one 🎭","I give them a redacted document. The important parts are blacked out 🖤","I show them ACCESS DENIED and disappear into the code ⛔","Nothing. By the time they figure it out, it's already done ⚡"]},
+  {q:"Your biggest secret just got exposed. How do you feel?",hint:"// FHE was built so this never happens on-chain",options:["Betrayed. Some things were never meant to be seen","Unbothered. That wasn't the real secret anyway","Dangerous. Now they know too much and they'll regret it","Glitching. The system was supposed to protect this","Impossible. I encrypted it before it could be touched"]},
+  {q:"Which of these feels most like your creative process?",hint:"// without FHE, your on-chain strategy is public before you act",options:["Ancient and deliberate — I've been building longer than you know","Beautiful and hidden — my best work lives behind a curtain","Classified — everything is on a need-to-know basis","Glitchy and fast — I exist where the algorithm forgot to watch","Encrypted by default — I think in private and reveal only results"]},
+  {q:"A brand wants to work with you. What do they actually get?",hint:"// like a DeFi position — show results, not strategy",options:["A legacy. History, depth, something they've never seen before","An aesthetic. I make their product look like art","A strategy they'll never fully understand but always benefit from","A glitch in their feed. Something that doesn't look like everything else","The final form. I am the evolution they didn't know they needed"]},
+  {q:"What does privacy mean to you?",hint:"// this is the core of everything Fhenix is building",options:["An ancient right — humans have protected secrets since the beginning","An art form — the most beautiful things are kept hidden","A weapon — information asymmetry is the greatest power","A glitch — I live in spaces the system wasn't built to watch","Mathematics — the only real privacy is cryptographic and provable"]}
+];
+
+const eras=[
+  {key:"egypt",era:"Ancient Era",title:"The Original Keeper",subtitle:"// privacy.era = ancient_egypt",symbol:"𓂀",bgText:"𓂀𓃭𓆣𓇋𓈖𓉐𓊃𓋴𓌙𓍱𓎛𓏏𓐍𓑀𓒀𓓀𓔀𓕀𓖀𓗀𓘀𓙀𓚀𓛀𓜀𓝀𓞀𓟀𓠀𓡀𓢀𓣀𓤀𓥀𓦀𓧀𓨀𓩀𓪀𓫀𓬀𓭀𓮀𓯀𓰀𓱀𓲀𓳀𓴀𓵀𓶀𓷀𓸀𓹀𓺀𓻀𓼀𓽀𓾀𓿀".repeat(8),desc:"You were here first. Before passwords, before blockchain, before algorithms — <strong>you sealed the scroll.</strong> Privacy, to you, is not a technology problem. It is a human right older than civilization itself. You carry secrets with the reverence of someone who knows that knowledge has always been the most powerful currency.",traits:["Deliberate","Ancient Wisdom","Untouchable","Original"],fhe:"Like FHE, you understood from the beginning that the most powerful secrets are the ones <strong>never exposed in the first place.</strong> Fhenix built the cryptographic math that brings this ancient principle to blockchain — your data is processed without ever being seen.",shareText:"I just discovered my Privacy Era ✦\n\nI'm \"The Original Keeper\" — Ancient Era\n// privacy.era = ancient_egypt\n\n📜 I was encrypting before encryption existed.\n\nFind yours → by @wisweb3 for @fhenix 🔒"},
+  {key:"renaissance",era:"Renaissance Era",title:"The Hidden Artist",subtitle:"// privacy.era = renaissance",symbol:"🎭",bgText:"sealed secret hidden masked concealed veiled private classified sealed secret hidden masked concealed veiled private classified sealed secret hidden masked concealed veiled private classified sealed secret hidden masked concealed veiled private classified".repeat(4),desc:"Privacy, to you, is <strong>an aesthetic.</strong> You don't hide — you curate. You decide exactly what people see, and you make that curation stunning. Your content is the mask: beautiful on the outside, classified on the inside. You have turned concealment into art and the world never even noticed.",traits:["Curated","Mysterious","Artistic","Strategic"],fhe:"You understand <strong>selective disclosure</strong> — showing what matters, hiding what doesn't. That is exactly how Fhenix FHE works. Your data is processed. Results are revealed. Nothing in between is ever seen. You were doing FHE before FHE existed.",shareText:"I just discovered my Privacy Era ✦\n\nI'm \"The Hidden Artist\" — Renaissance Era\n// privacy.era = renaissance\n\n🎭 My content is the mask — beautiful outside, classified inside.\n\nFind yours → by @wisweb3 for @fhenix 🔒"},
+  {key:"ww2",era:"Classified Era",title:"The Classified One",subtitle:"// privacy.era = classified",symbol:"🔏",bgText:"CLASSIFIED REDACTED ████ TOP SECRET CLASSIFIED REDACTED ████ TOP SECRET CLASSIFIED REDACTED ████ TOP SECRET CLASSIFIED REDACTED ████ TOP SECRET CLASSIFIED REDACTED ████ TOP SECRET CLASSIFIED REDACTED ████ TOP SECRET".repeat(3),desc:"You operate on a strict need-to-know basis. <strong>Most people don't need to know.</strong> Your strategies are redacted before anyone can read them. Your moves are encrypted before they happen. You have turned information asymmetry into your greatest weapon — and you have never lost a battle you actually planned for.",traits:["Classified","Disciplined","Strategic","Calculated"],fhe:"In DeFi, your open strategy gets <strong>front-run before it lands.</strong> Bots see your transaction and strike first. Fhenix encrypts your moves in the mempool — nobody can copy or exploit them before they confirm. You finally have the infrastructure your classified mind deserves.",shareText:"I just discovered my Privacy Era ✦\n\nI'm \"The Classified One\" — Classified Era\n// privacy.era = classified\n\n🔏 Most people don't need to know.\n\nFind yours → by @wisweb3 for @fhenix 🔒"},
+  {key:"y2k",era:"Y2K Era",title:"The System Glitch",subtitle:"// privacy.era = access_denied",symbol:"⛔",bgText:"ACCESS DENIED 01001111 CONNECTION FAILED 10110100 ERROR 404 FIREWALL ACTIVE ACCESS DENIED 01001111 CONNECTION FAILED 10110100 ERROR 404 FIREWALL ACTIVE ACCESS DENIED 01001111 CONNECTION FAILED 10110100 ERROR 404 FIREWALL ACTIVE".repeat(3),desc:"You exist in the gaps the system forgot to monitor. <strong>ACCESS DENIED</strong> is your entire aesthetic. You're not hiding — you're operating on a frequency most people can't decode. Born in the era of passwords and firewalls, you understood from day one that the internet was never built to protect you.",traits:["Glitchy","Ahead of time","Digital native","Unbothered"],fhe:"You already knew what most people are just waking up to: <strong>the old systems were never built for your privacy.</strong> VPNs hide your IP, not your soul. Fhenix rebuilds the architecture from scratch — encrypted by default, private by design. You were right all along.",shareText:"I just discovered my Privacy Era ✦\n\nI'm \"The System Glitch\" — Y2K Era\n// privacy.era = access_denied\n\n⛔ ACCESS DENIED. The system was never built for me.\n\nFind yours → by @wisweb3 for @fhenix 🔒"},
+  {key:"fhe",era:"FHE Era",title:"The Final Form",subtitle:"// privacy.era = fully_encrypted",symbol:"⚡",bgText:"00d4ff ENCRYPTED FHE COMPUTED NEVER EXPOSED FHENIX 0a1628 00d4ff ENCRYPTED FHE COMPUTED NEVER EXPOSED FHENIX 0a1628 00d4ff ENCRYPTED FHE COMPUTED NEVER EXPOSED FHENIX 0a1628 00d4ff ENCRYPTED FHE COMPUTED NEVER EXPOSED FHENIX 0a1628".repeat(3),desc:"You are the evolution. <strong>Fully encrypted. Fully composable. Fully yourself.</strong> You don't just protect your data — you have built an existence where nothing is exposed unless you explicitly allow it. You move through the digital world the way FHE moves through computation: processed by the system, never seen by it.",traits:["Encrypted","Evolved","Unstoppable","Final Form"],fhe:"You ARE the Fhenix era. <strong>Fully Homomorphic Encryption</strong> means your data is computed on without ever being decrypted. The server processes your information without seeing it. The network confirms results without knowing inputs. You finally have the privacy infrastructure that matches who you already are.",shareText:"I just discovered my Privacy Era ✦\n\nI'm \"The Final Form\" — FHE Era\n// privacy.era = fully_encrypted\n\n⚡ Processed by the system. Never seen by it.\n\nFind yours → by @wisweb3 for @fhenix 🔒"}
+];
+
+let current=0,answers=[],selected=null;
+const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.?/\\~`";
+
+function renderQuestion(){
+  const q=questions[current];
+  document.getElementById('qNumber').textContent=`— 0${current+1} / 05`;
+  document.getElementById('qHint').textContent=q.hint;
+  document.getElementById('qText').textContent=q.q;
+  const wrap=document.getElementById('optionsWrap');
+  wrap.innerHTML='';
+  ['A','B','C','D','E'].forEach((k,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.innerHTML=`<span class="option-key">${k}</span>${q.options[i]}<span class="lock-icon">🔒</span>`;
+    btn.onclick=()=>selectOption(i,btn);
+    wrap.appendChild(btn);
+  });
+  selected=null;
+  document.getElementById('encryptBtn').style.display='none';
+  const pct=Math.round((current/questions.length)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent=`Question ${current+1} of ${questions.length}`;
+  document.getElementById('progressPct').textContent=pct+'%';
+}
+
+function selectOption(index,btn){
+  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selected=index;
+  document.getElementById('encryptBtn').style.display='block';
+}
+
+function lockAndNext(){
+  if(selected===null)return;
+  document.querySelectorAll('.option-btn').forEach(b=>{
+    b.classList.add('locked');
+    if(!b.classList.contains('selected'))b.style.opacity='0.25';
+  });
+  const eb=document.getElementById('encryptBtn');
+  eb.textContent='✓ Encrypted';eb.style.opacity='0.6';eb.style.cursor='not-allowed';
+  setTimeout(()=>{
+    answers.push(selected);current++;
+    if(current<questions.length){
+      eb.textContent='🔒 Encrypt & Continue';eb.style.opacity='1';eb.style.cursor='pointer';
+      document.getElementById('questionCard').style.animation='none';
+      setTimeout(()=>{document.getElementById('questionCard').style.animation='fadeUp 0.4s ease';renderQuestion();},50);
+    } else {showEncrypting();}
+  },600);
+}
+
+function showEncrypting(){
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('encryptBtn').style.display='none';
+  document.getElementById('progressWrap').style.display='none';
+  document.getElementById('encryptingScreen').style.display='block';
+  let frame=0;
+  const cipher=document.getElementById('cipherStream');
+  const iv=setInterval(()=>{
+    let s='';for(let i=0;i<140;i++)s+=chars[Math.floor(Math.random()*chars.length)];
+    cipher.textContent=s;frame++;if(frame>44)clearInterval(iv);
+  },50);
+  setTimeout(showResult,2400);
+}
+
+function getResultIndex(){
+  const freq=[0,0,0,0,0];
+  answers.forEach(a=>freq[a]++);
+  return freq.indexOf(Math.max(...freq));
+}
+
+function showResult(){
+  document.getElementById('encryptingScreen').style.display='none';
+  const r=eras[getResultIndex()];
+  const card=document.getElementById('resultCard');
+  card.innerHTML=`
+    <div class="era-banner">
+      <div class="era-bg-text">${r.bgText}</div>
+      <div class="era-glow"></div>
+      <div class="era-symbol">${r.symbol}</div>
+    </div>
+    <div class="result-body">
+      <div class="result-era-tag">✦ ${r.era}</div>
+      <div class="result-title">${r.title}</div>
+      <div class="result-subtitle">${r.subtitle}</div>
+      <div class="result-divider"></div>
+      <div class="result-desc">${r.desc}</div>
+      <div class="result-traits">${r.traits.map(t=>`<span class="result-trait">${t}</span>`).join('')}</div>
+      <div class="fhe-connection">
+        <strong>// how this connects to Fhenix FHE</strong><br/><br/>
+        ${r.fhe} <a href="https://fhenix.io" target="_blank">→ fhenix.io</a>
+      </div>
+      <div class="action-row">
+        <button class="btn-download" onclick="downloadCard()">⬇ Download my card</button>
+        <button class="btn-secondary" onclick="copyText()">🔒 Copy result</button>
+        <a class="btn-secondary" href="https://x.com/fhenix" target="_blank">Follow @fhenix</a>
+        <button class="btn-secondary" onclick="restart()">↺ Retake</button>
+      </div>
+    </div>
+  `;
+  card.style.display='block';
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('progressLabel').textContent='Complete — decrypted ✓';
+  document.getElementById('progressPct').textContent='100%';
+  document.getElementById('progressWrap').style.display='block';
+}
+
+function downloadCard(){
+  const r=eras[getResultIndex()];
+  const canvas=document.createElement('canvas');
+  const W=1080,H=1080;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+
+  // background
+  ctx.fillStyle='#060f1e';ctx.fillRect(0,0,W,H);
+
+  // grid
+  ctx.strokeStyle='rgba(0,212,255,0.04)';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // top glow
+  const grad=ctx.createRadialGradient(W/2,0,0,W/2,0,500);
+  grad.addColorStop(0,'rgba(0,212,255,0.12)');
+  grad.addColorStop(1,'transparent');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+
+  // border
+  ctx.strokeStyle='rgba(0,212,255,0.25)';ctx.lineWidth=2;
+  ctx.strokeRect(24,24,W-48,H-48);
+
+  // top line
+  ctx.strokeStyle='rgba(0,212,255,0.5)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(24,24);ctx.lineTo(W-24,24);ctx.stroke();
+
+  // fhenix tag
+  ctx.fillStyle='rgba(0,212,255,0.08)';
+  roundRect(ctx,W/2-120,52,240,32,16);ctx.fill();
+  ctx.fillStyle='#00d4ff';ctx.font='bold 13px monospace';ctx.textAlign='center';
+  ctx.fillText('( f* ) FHENIX × ENCRYPT YOUR AESTHETIC',W/2,73);
+
+  // big symbol
+  ctx.font=`${140}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(r.symbol,W/2,300);
+
+  // symbol glow
+  const sg=ctx.createRadialGradient(W/2,300,0,W/2,300,180);
+  sg.addColorStop(0,'rgba(0,212,255,0.15)');sg.addColorStop(1,'transparent');
+  ctx.fillStyle=sg;ctx.beginPath();ctx.arc(W/2,300,180,0,Math.PI*2);ctx.fill();
+
+  // era tag
+  ctx.fillStyle='rgba(0,212,255,0.12)';
+  roundRect(ctx,W/2-100,420,200,30,15);ctx.fill();
+  ctx.fillStyle='#00d4ff';ctx.font='bold 13px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(`✦ ${r.era.toUpperCase()}`,W/2,435);
+
+  // title
+  ctx.fillStyle='#f0f4ff';ctx.font='bold 64px Space Grotesk, sans-serif';ctx.textAlign='center';ctx.textBaseline='top';
+  wrapText(ctx,r.title,W/2,470,W-120,74);
+
+  // subtitle
+  ctx.fillStyle='rgba(0,212,255,0.5)';ctx.font='16px monospace';ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText(r.subtitle,W/2,600);
+
+  // divider
+  ctx.strokeStyle='rgba(0,212,255,0.15)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(80,640);ctx.lineTo(W-80,640);ctx.stroke();
+
+  // traits
+  const tw=160,th=36,tgap=16;
+  const totalW=r.traits.length*(tw+tgap)-tgap;
+  let tx=(W-totalW)/2;
+  r.traits.forEach(t=>{
+    ctx.fillStyle='rgba(0,212,255,0.08)';
+    roundRect(ctx,tx,660,tw,th,18);ctx.fill();
+    ctx.strokeStyle='rgba(0,212,255,0.25)';ctx.lineWidth=1;
+    roundRect(ctx,tx,660,tw,th,18);ctx.stroke();
+    ctx.fillStyle='#00d4ff';ctx.font='bold 13px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(t,tx+tw/2,660+th/2);
+    tx+=tw+tgap;
+  });
+
+  // bottom bar
+  ctx.fillStyle='rgba(0,212,255,0.06)';ctx.fillRect(24,H-80,W-48,56);
+  ctx.fillStyle='rgba(0,212,255,0.4)';ctx.font='14px monospace';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('made by @wisweb3',50,H-52);
+  ctx.textAlign='right';
+  ctx.fillText('for @fhenix | fhenix.io',W-50,H-52);
+
+  // watermark
+  ctx.fillStyle='rgba(0,212,255,0.06)';ctx.font='bold 11px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('// privacy.era = '+r.key,W/2,H-52);
+
+  const dataUrl=canvas.toDataURL('image/png',1.0);
+  // Try download first (desktop), fallback to new tab (mobile)
+  try {
+    const link=document.createElement('a');
+    link.download=`my-privacy-era-${r.key}.png`;
+    link.href=dataUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Downloaded! Check your gallery ✓');
+  } catch(e) {
+    const tab=window.open();
+    tab.document.write(`<img src="${dataUrl}" style="max-width:100%;display:block;margin:auto"/><p style="text-align:center;font-family:monospace;color:#00d4ff;margin-top:12px">Long press the image to save it 🔒</p>`);
+    showToast('Opened in new tab — long press to save ✓');
+  }
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+function wrapText(ctx,text,x,y,maxW,lineH){
+  const words=text.split(' ');let line='';let ty=y;
+  words.forEach((word,i)=>{
+    const test=line+word+' ';
+    if(ctx.measureText(test).width>maxW&&i>0){ctx.fillText(line,x,ty);line=word+' ';ty+=lineH;}
+    else{line=test;}
+  });
+  ctx.fillText(line,x,ty);
+}
+
+function copyText(){
+  const r=eras[getResultIndex()];
+  navigator.clipboard.writeText(r.shareText).then(()=>showToast('Copied to clipboard ✓'));
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function restart(){
+  current=0;answers=[];selected=null;
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('questionCard').style.display='block';
+  document.getElementById('progressWrap').style.display='block';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
